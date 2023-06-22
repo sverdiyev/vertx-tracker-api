@@ -50,6 +50,7 @@ public class MainVerticle extends AbstractVerticle {
 
     BasicRestApi.attach(restApi);
     StockRestApi.attach(restApi);
+    QuotesRestApi.attach(restApi);
 
     server.requestHandler(restApi).listen(8888).onSuccess(s -> {
       log.info("Server started");
