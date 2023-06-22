@@ -1,6 +1,7 @@
 package com.sverdiyev.tracker;
 
 import com.sverdiyev.tracker.routers.BasicRestApi;
+import com.sverdiyev.tracker.routers.QuotesRestApi;
 import com.sverdiyev.tracker.routers.StockRestApi;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
@@ -8,8 +9,10 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import lombok.extern.slf4j.Slf4j;
 
-@SuppressWarnings("java:S106")
+
+@Slf4j
 public class MainVerticle extends AbstractVerticle {
 
   public static void main(String[] args) {
@@ -17,9 +20,9 @@ public class MainVerticle extends AbstractVerticle {
 
     vertx.deployVerticle(new MainVerticle(), result -> {
       if (result.failed()) {
-        System.out.println("Failed to deploy");
+        log.info("Failed to deploy");
       } else {
-        System.out.println("Main Verticle deployed successfully");
+        log.info("Main Verticle deployed successfully");
       }
     });
   }
@@ -31,7 +34,7 @@ public class MainVerticle extends AbstractVerticle {
       return;
     }
 
-    System.out.printf("Route Error: %s", errCtx.failure());
+    log.info("Route Error: %s", errCtx.failure());
 
     errCtx.response().setStatusCode(500).end(new JsonObject().put("message", "server error").toBuffer());
   }
@@ -39,6 +42,7 @@ public class MainVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
     var server = vertx.createHttpServer();
+    log.info("LOG LOG LOG ");
 
     Router restApi = Router.router(vertx);
 
@@ -48,7 +52,7 @@ public class MainVerticle extends AbstractVerticle {
     StockRestApi.attach(restApi);
 
     server.requestHandler(restApi).listen(8888).onSuccess(s -> {
-      System.out.println("Server started");
+      log.info("Server started");
 
       //signals to vertex that start of this vertical is complete, and it can move on to further initialization of verticles
       startPromise.complete();
