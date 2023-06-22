@@ -1,10 +1,13 @@
 package com.sverdiyev.tracker;
 
 import com.sverdiyev.tracker.routers.BasicRestApi;
+import com.sverdiyev.tracker.routers.StockRestApi;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -18,14 +21,27 @@ public class MainVerticle extends AbstractVerticle {
     });
   }
 
+  private static void handleFailure(RoutingContext errCtx) {
+
+    if (errCtx.response().ended()) {
+      //ignore - user ended the request
+      return;
+    }
+
+    System.out.printf("Route Error: %s", errCtx.failure());
+
+    errCtx.response().setStatusCode(500).end(new JsonObject().put("message", "server error").toBuffer());
+  }
+
   @Override
   public void start(Promise<Void> startPromise) {
     var server = vertx.createHttpServer();
 
     Router restApi = Router.router(vertx);
+    restApi.route().failureHandler(MainVerticle::handleFailure);
 
     BasicRestApi.attach(restApi);
-
+    StockRestApi.attach(restApi);
     server.requestHandler(restApi).listen(8888);
   }
 }
