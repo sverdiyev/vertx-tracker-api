@@ -2,13 +2,21 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <artifactId>tracker</artifactId>
 
+
+  <artifactId>tracker</artifactId>
   <build>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <artifactId>lombok</artifactId>
+              <groupId>org.projectlombok</groupId>
+              <version>1.18.28</version>
+            </path>
+          </annotationProcessorPaths>
           <release>11</release>
         </configuration>
         <version>${maven-compiler-plugin.version}</version>
@@ -87,6 +95,14 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <version>2.15.0</version>
     </dependency>
+
+    <dependency>
+      <artifactId>lombok</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <scope>provided</scope>
+      <version>1.18.28</version>
+    </dependency>
+
   </dependencies>
   <dependencyManagement>
     <dependencies>

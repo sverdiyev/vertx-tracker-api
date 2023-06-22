@@ -1,20 +1,14 @@
 package com.sverdiyev.tracker.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+
+@Value
+@Builder
+@AllArgsConstructor
 public class Stock {
 
-  private final String name;
-  private final String ticker;
-
-  public Stock(String name, String ticker) {
-    this.name = name;
-    this.ticker = ticker;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getTicker() {
-    return ticker;
-  }
+  String name;
+  String ticker;
 }
