@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>tracker</artifactId>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>11</release>
+        </configuration>
+        <version>${maven-compiler-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <outputFile>
+                ${project.build.directory}/${project.artifactId}-${project.version}-fat.jar
+              </outputFile>
+              <transformers>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>${launcher.class}</Main-Class>
+                    <Main-Verticle>${main.verticle}</Main-Verticle>
+                  </manifestEntries>
+                </transformer>
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              </transformers>
+            </configuration>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <version>${maven-shade-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <arguments>
+            <argument>run</argument>
+            <argument>${main.verticle}</argument>
+          </arguments>
+          <mainClass>io.vertx.core.Launcher</mainClass>
+        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <version>${exec-maven-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <artifactId>vertx-web</artifactId>
+      <groupId>io.vertx</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>vertx-junit5</artifactId>
+      <groupId>io.vertx</groupId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <artifactId>junit-jupiter-api</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <scope>test</scope>
+      <version>${junit-jupiter.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <scope>test</scope>
+      <version>${junit-jupiter.version}</version>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>vertx-stack-depchain</artifactId>
+        <groupId>io.vertx</groupId>
+        <scope>import</scope>
+        <type>pom</type>
+        <version>${vertx.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <groupId>com.sverdiyev</groupId>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <properties>
+    <exec-maven-plugin.version>3.0.0</exec-maven-plugin.version>
+
+    <junit-jupiter.version>5.9.1</junit-jupiter.version>
+    <launcher.class>io.vertx.core.Launcher</launcher.class>
+    <main.verticle>com.sverdiyev.tracker.MainVerticle</main.verticle>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+
+    <maven-shade-plugin.version>3.2.4</maven-shade-plugin.version>
+    <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <vertx.version>4.4.4</vertx.version>
+  </properties>
+
+  <version>1.0.0-SNAPSHOT</version>
+
+
+</project>
