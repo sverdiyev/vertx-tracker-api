@@ -2,30 +2,38 @@ package com.sverdiyev.tracker.routers;
 
 import com.sverdiyev.tracker.models.Quote;
 import com.sverdiyev.tracker.models.Stock;
+import com.sverdiyev.tracker.models.StockDTO;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class QuotesRestApi {
 
 
-  private static final Map<String, Quote> cachedQuotes = new HashMap<>();
+  private static Map<String, Quote> cachedQuotes = new HashMap<>();
+  private static List<String> symbols = new ArrayList<>(List.of("AAPL", "SP500", "GGL", "NTFLX"));
 
   private QuotesRestApi() {
   }
 
   public static void attach(Router parent) {
+
+    populateCachedQuotes();
+
     parent.get("/quotes/:stockName").handler(ctx -> {
+      log.info("retrieving stock");
 
       var stockName = ctx.pathParam("stockName");
-      var cachedQuotes = getCachedQuotes();
 
       var cachedQuote = cachedQuotes.get(stockName);
       if (cachedQuote != null) {
@@ -40,6 +48,31 @@ public class QuotesRestApi {
         ctx.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(res.toBuffer());
       }
     });
+
+    parent.post("/quotes").handler(ctx -> {
+
+      log.info("adding stock");
+
+      StockDTO stockName = ctx.body().asPojo(StockDTO.class);
+
+      cachedQuotes.put(stockName.getName(), randomQuote(stockName.getName()));
+      symbols.add(stockName.getName());
+
+      ctx.response().setStatusCode(200).end();
+    });
+
+    parent.delete("/quotes/:stockName").handler(ctx -> {
+      log.info("deleting stock");
+
+      var stockName = ctx.pathParam("stockName");
+
+      cachedQuotes.remove(stockName);
+      symbols.remove(stockName);
+
+      ctx.response().setStatusCode(200).end();
+    });
+
+
   }
 
   private static Quote randomQuote(String stockName) {
@@ -53,15 +86,13 @@ public class QuotesRestApi {
   }
 
 
-  private static Map<String, Quote> getCachedQuotes() {
+  private static void populateCachedQuotes() {
 
-    List<String> symbols = List.of("AAPL", "SP500", "GGL", "NTFLX");
-
+    log.info("cached quotes map is being populated");
     for (String symbol : symbols) {
       cachedQuotes.put(symbol, randomQuote(symbol));
     }
 
-    return cachedQuotes;
   }
 
 

@@ -9,6 +9,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -46,7 +47,9 @@ public class MainVerticle extends AbstractVerticle {
 
     Router restApi = Router.router(vertx);
 
-    restApi.route().failureHandler(MainVerticle::handleFailure);
+    restApi.route()
+      .handler(BodyHandler.create()) //enables passing body to request objects in handlers
+      .failureHandler(MainVerticle::handleFailure);
 
     BasicRestApi.attach(restApi);
     StockRestApi.attach(restApi);

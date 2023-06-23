@@ -1,0 +1,15 @@
+POST http://localhost:8888/quotes
+Content-Type: application/json
+
+{
+  "name": "elo"
+}
+
+###
+
+GET http://localhost:8888/quotes/elo
+
+
+###
+
+DELETE http://localhost:8888/quotes/elo
