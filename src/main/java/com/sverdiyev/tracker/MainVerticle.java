@@ -34,7 +34,7 @@ public class MainVerticle extends AbstractVerticle {
       return;
     }
 
-    log.info("Route Error: %s", errCtx.failure());
+    log.error("Route Error: ", errCtx.failure());
 
     errCtx.response().setStatusCode(500).end(new JsonObject().put("message", "server error").toBuffer());
   }
