@@ -4,6 +4,7 @@ import com.sverdiyev.tracker.routers.BasicRestApi;
 import com.sverdiyev.tracker.routers.QuotesRestApi;
 import com.sverdiyev.tracker.routers.StockRestApi;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -19,7 +20,7 @@ public class MainVerticle extends AbstractVerticle {
   public static void main(String[] args) {
     var vertx = Vertx.vertx();
 
-    vertx.deployVerticle(new MainVerticle(), result -> {
+    vertx.deployVerticle(MainVerticle.class.getName(), new DeploymentOptions().setInstances(4), result -> {
       if (result.failed()) {
         log.info("Failed to deploy");
       } else {
