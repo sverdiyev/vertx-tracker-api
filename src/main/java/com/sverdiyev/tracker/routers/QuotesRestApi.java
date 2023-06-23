@@ -15,6 +15,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class QuotesRestApi {
 
+
+  private static final Map<String, Quote> cachedQuotes = new HashMap<>();
+
   private QuotesRestApi() {
   }
 
@@ -51,8 +54,6 @@ public class QuotesRestApi {
 
 
   private static Map<String, Quote> getCachedQuotes() {
-
-    HashMap<String, Quote> cachedQuotes = new HashMap<>();
 
     List<String> symbols = List.of("AAPL", "SP500", "GGL", "NTFLX");
 
