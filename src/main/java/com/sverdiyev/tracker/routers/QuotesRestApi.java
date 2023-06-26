@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QuotesRestApi {
 
-
   private static Map<String, Quote> cachedQuotes = new HashMap<>();
   private static List<String> symbols = new ArrayList<>(List.of("AAPL", "SP500", "GGL", "NTFLX"));
 
@@ -31,7 +30,6 @@ public class QuotesRestApi {
     populateCachedQuotes();
 
     parent.get("/quotes/:stockName").handler(ctx -> {
-      log.info("retrieving stock");
 
       var stockName = ctx.pathParam("stockName");
 
@@ -40,10 +38,12 @@ public class QuotesRestApi {
         var arr = new JsonArray();
         arr.add(cachedQuotes.get(stockName));
         ctx.response().end(arr.toBuffer());
+        log.info("Stock was found: {}", stockName);
       } else {
 
         var res = (new JsonObject());
 
+        log.warn("Stock was NOT found: {}", stockName);
         res.put("message", "No Quote was found");
         ctx.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(res.toBuffer());
       }
@@ -51,9 +51,9 @@ public class QuotesRestApi {
 
     parent.post("/quotes").handler(ctx -> {
 
-      log.info("adding stock");
-
       StockDTO stockName = ctx.body().asPojo(StockDTO.class);
+
+      log.info("adding stock: {}", stockName.getName());
 
       cachedQuotes.put(stockName.getName(), randomQuote(stockName.getName()));
       symbols.add(stockName.getName());
@@ -62,9 +62,9 @@ public class QuotesRestApi {
     });
 
     parent.delete("/quotes/:stockName").handler(ctx -> {
-      log.info("deleting stock");
 
       var stockName = ctx.pathParam("stockName");
+      log.info("deleting stock: {}", stockName);
 
       cachedQuotes.remove(stockName);
       symbols.remove(stockName);
