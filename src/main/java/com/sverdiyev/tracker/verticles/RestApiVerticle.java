@@ -5,7 +5,6 @@ import com.sverdiyev.tracker.routers.QuotesRestApi;
 import com.sverdiyev.tracker.routers.StockRestApi;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -32,14 +31,14 @@ public class RestApiVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) {
     var server = vertx.createHttpServer();
 
-    log.info("Rest API Verticle vertx id: {}", deploymentID());
+//    log.info("Rest API Verticle vertx id: {}", deploymentID());
 
     Router restApi = Router.router(vertx);
 
     restApi.route()
       .handler(BodyHandler.create()) //enables passing body to request objects in handlers
       .handler(ctx -> {
-        log.info("Current vertx id: {}", Vertx.currentContext().deploymentID());
+//        log.info("Current vertx id: {}", Vertx.currentContext().deploymentID());
 //        try {
 //          Thread.sleep(2000);
 //        } catch (InterruptedException e) {

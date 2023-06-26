@@ -16,7 +16,7 @@ public class MainVerticle extends AbstractVerticle {
 
     vertx.deployVerticle(MainVerticle.class.getName(), new DeploymentOptions().setInstances(1), result -> {
 
-      log.info("Main Verticle vertx id: {}", Vertx.currentContext().deploymentID());
+//      log.info("Main Verticle vertx id: {}", Vertx.currentContext().deploymentID());
 
       if (result.failed()) {
         log.info("Failed to deploy");
