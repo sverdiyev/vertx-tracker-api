@@ -9,28 +9,25 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
-public class QuotesRestApi {
+public class QuotesNonStaticRestApi {
 
-  //concurrent - to allow access from multiple threads
-  private static final Map<String, Quote> cachedQuotes = new ConcurrentHashMap<>();
-  private static final List<String> symbols = new ArrayList<>(List.of("AAPL", "SP500", "GGL", "NTFLX"));
+  private final Map<String, Quote> cachedQuotes = new HashMap<>();
+  private final List<String> symbols = new ArrayList<>(List.of("AAPL", "SP500", "GGL", "NTFLX"));
 
-  private QuotesRestApi() {
-  }
 
-  public static void attach(Router parent) {
+  public void attach(Router parent) {
 
     populateCachedQuotes();
 
-    parent.get("/quotes/:stockName").handler(ctx -> {
+    parent.get("/non-static/quotes/:stockName").handler(ctx -> {
 
       var stockName = ctx.pathParam("stockName");
 
@@ -50,7 +47,7 @@ public class QuotesRestApi {
       }
     });
 
-    parent.post("/quotes").handler(ctx -> {
+    parent.post("/non-static/quotes").handler(ctx -> {
 
       StockDTO stockName = ctx.body().asPojo(StockDTO.class);
 
@@ -62,7 +59,7 @@ public class QuotesRestApi {
       ctx.response().setStatusCode(200).end();
     });
 
-    parent.delete("/quotes/:stockName").handler(ctx -> {
+    parent.delete("/non-static/quotes/:stockName").handler(ctx -> {
 
       var stockName = ctx.pathParam("stockName");
       log.info("deleting stock: {}", stockName);
@@ -76,7 +73,7 @@ public class QuotesRestApi {
 
   }
 
-  private static Quote randomQuote(String stockName) {
+  private Quote randomQuote(String stockName) {
     return Quote.builder()
       .ask(randomValue())
       .bid(randomValue())
@@ -87,7 +84,7 @@ public class QuotesRestApi {
   }
 
 
-  private static void populateCachedQuotes() {
+  private void populateCachedQuotes() {
 
     log.info("cached quotes map is being populated");
     for (String symbol : symbols) {
@@ -97,7 +94,7 @@ public class QuotesRestApi {
   }
 
 
-  private static BigDecimal randomValue() {
+  private BigDecimal randomValue() {
     return BigDecimal.valueOf(ThreadLocalRandom.current().nextDouble(1, 100));
   }
 }

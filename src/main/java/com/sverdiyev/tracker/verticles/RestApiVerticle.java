@@ -1,6 +1,7 @@
 package com.sverdiyev.tracker.verticles;
 
 import com.sverdiyev.tracker.routers.BasicRestApi;
+import com.sverdiyev.tracker.routers.QuotesNonStaticRestApi;
 import com.sverdiyev.tracker.routers.QuotesRestApi;
 import com.sverdiyev.tracker.routers.StockRestApi;
 import io.vertx.core.AbstractVerticle;
@@ -48,9 +49,13 @@ public class RestApiVerticle extends AbstractVerticle {
       })
       .failureHandler(RestApiVerticle::handleFailure);
 
+    QuotesNonStaticRestApi api = new QuotesNonStaticRestApi(); //this api will have storage per thread
+
+    api.attach(restApi);
+
     BasicRestApi.attach(restApi);
     StockRestApi.attach(restApi);
-    QuotesRestApi.attach(restApi);
+    QuotesRestApi.attach(restApi); //this api will have one storage across the threads
 
     server.requestHandler(restApi).listen(8888).onSuccess(s -> {
       log.info("Server started");
